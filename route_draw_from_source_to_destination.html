@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Simple Map</title>
+        <meta name="viewport" content="initial-scale=1.0">
+        <meta charset="utf-8">
+        <style>
+            #map {
+                height: 100%;
+            }
+            html, body {
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="map"></div>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.3/jquery.js"></script>
+        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCEg19iKoNwgA273SxD4AbqzMQYFQR0ev0" async defer></script>
+
+        <script>
+                var directionsService;
+                var directionsDisplay;
+                var map;
+
+                window.onload = function () {
+
+                    directionsService = new google.maps.DirectionsService();
+                    directionsDisplay = new google.maps.DirectionsRenderer();
+                    // var center = new google.maps.LatLng(37.334818, -121.884886);
+                    var center = new google.maps.LatLng(37.334818, -121.884886);
+                    var mapOptions = {
+                        zoom: 13,
+                        center: center
+                    };
+                    map = new google.maps.Map(document.getElementById('map'), mapOptions);
+                    directionsDisplay.setMap(map);
+                    calcRoute(37.334818, -121.884886, 37.441883, -122.143019);
+                }
+
+                function calcRoute(startlat, startLng, endLat, endLng) {
+                    var start = new google.maps.LatLng(startlat, startLng);
+                    var end = new google.maps.LatLng(endLat, endLng);
+                    console.log(start + "    " + end)
+                    var bounds = new google.maps.LatLngBounds();
+                    bounds.extend(start);
+                    bounds.extend(end);
+                    map.fitBounds(bounds);
+                    var request = {
+                        origin: start,
+                        destination: end,
+                        travelMode: google.maps.TravelMode.DRIVING
+                    };
+                    directionsService.route(request, function (response, status) {
+                        if (status == google.maps.DirectionsStatus.OK) {
+                            directionsDisplay.setDirections(response);
+                            directionsDisplay.setMap(map);
+                        } else {
+                            alert("Directions Request from " + start.toUrlValue(6) + " to " + end.toUrlValue(6) + " failed: " + status);
+                        }
+                    });
+                }
+
+        </script>
+</html>
